@@ -17,7 +17,8 @@ This is a ** portfolio website** built using **ReactJS**, **Tailwind CSS**, and 
 
 ## 🌐 Live Demo
 
-Versel :- https://vercel.com/swapnilk-06/portfolio-one-page
+Versel :- One Page Portfolio 
+https://portfolio-one-page-pi.vercel.app/
 
 ---
 

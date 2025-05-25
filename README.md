@@ -33,7 +33,8 @@ npm run dev
 ## 🗂️ Folder Structure
 
 ```
-working-projects/ 
+working-projects/
+├── Movie_Watchlist
 ├── Portfolio Site
 └── README.md 
 ```

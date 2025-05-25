@@ -1,7 +1,7 @@
 # Portfolio Site
 
 
-This is a ** portfolio website** built using **ReactJS**, **Tailwind CSS**, and **Vite**.
+This is a **portfolio website** built using **ReactJS**, **Tailwind CSS**, and **Vite**.
 - Focused on applying the basics of responsive design, component structure, and modern frontend workflow.
 
 ---
@@ -17,7 +17,7 @@ This is a ** portfolio website** built using **ReactJS**, **Tailwind CSS**, and 
 
 ## 🌐 Live Demo
 
-Versel :- 
+Versel :- https://portfolio-one-page-pi.vercel.app/
 
 ---
 

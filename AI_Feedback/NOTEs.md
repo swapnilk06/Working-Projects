@@ -142,3 +142,92 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 });
 ```
+
+10] Database Connection 
+- For data store use <b>db</b> -> `MongoDB`
+- Backend talk with -> `mongoose`(package) -> & that talk with database(MongoDB).
+- mongoose -> its `middelman`
+- Install mongoose -> `npm i mongoose` 
+
+
+11] DB utils with boiler code
+
+.env
+```env
+PORT=3000
+
+MONGO_URL=mongodb://localhost:27017/ai_feedback
+
+BASE_URL=http://127.0.0.1:3000
+```
+
+utils -> db.js
+```js
+import mongoose from "mongoose";
+
+// use of dotenv in that becz of sometime loading 3rd part libraries in that time doytenv not loaded
+import dotenv from "dotenv"
+dotenv.config()
+
+// goal : export a function that connects to db 
+
+const db = () => {
+	mongoose.connect(process.env.MONGO_URL)
+	.then(() => {
+		console.log("Connected to mongodb");
+	})
+	.catch((err) => {
+		console.log("Error connecting to mongodb");
+	})
+}
+
+export default db;
+```
+
+connect db in -> `index.js`
+```js
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import db from "./utils/db.js"; // sometime also write db.js depends on configuration settings
+
+dotenv.config()
+
+const app = express();
+
+app.use(
+	cors({
+		origin: process.env.BASE_URL,
+		credentials: true,
+		methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization']
+	})
+);
+
+app.use(express.json()) // for get/post json value
+app.use(express.urlencoded({extended:true})) // handle url encoding
+
+const port = process.env.PORT || 4000; // don't used common port
+
+// app is web sever - get request on route in "/" 
+app.get('/', (req, res) => {
+  res.send('cohort!')
+})
+
+// connect to db
+db();
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+```
+
+12] Check db connected or not? -> `npm run dev`
+
+
+- [x] Completed Backend Boilerplate code with installation of -
+- dependencies : `cors, dotenv, express, mongodb(mongoose)`
+- devdependencies : `nodemon` 
+
+<br>
+

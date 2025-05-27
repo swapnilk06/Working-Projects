@@ -346,3 +346,14 @@ export default router
 
 <br>
 
+### Teting give Cookie Error
+Install - cookie-parser -> `npm install cookie-parser`
+- Its middleware of Express.js
+- Used to automatically reads and processes cookies from the incoming requests sent by clients.
+
+### Backend with mongodb & testing
+
+1] Create controller `getMe`, `logoutUser`, `resetPassword`, `forgotPassword`
+
+2] Create `middleware` i.e. only a code functionality
+- Middleware always used in our `routes`

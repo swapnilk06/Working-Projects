@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import db from "./utils/db.js"; // sometime also write db.js depends on configuration settings
+import cookieParser from "cookie-parser";
 
 // import all routes
 import userRoutes from "./routes/user.routes.js";
@@ -21,7 +22,7 @@ app.use(
 
 app.use(express.json()) // for get/post json value
 app.use(express.urlencoded({extended:true})) // handle url encoding
-app.use(cookieParser()); // access cookies in resquest/response
+app.use(cookieParser()); // access cookies in request/response
 
 const port = process.env.PORT || 4000; // don't used common port
 

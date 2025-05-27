@@ -231,3 +231,118 @@ app.listen(port, () => {
 
 <br>
 
+
+
+#### What to build? and What Data to Host(store)?
+
+- [x] Roles
+- USER
+- ADMIN
+
+- [x] User Schema
+- Name
+- Email
+- Password
+
+- [x] isVerified
+- passwordResetToken
+- passwordResetExpires
+
+- [x] User verification
+- verificationToken
+
+- [x] createdAt
+- [x] updatedAt
+
+
+1] Create model folder for data seperation 
+User data boiler code -> `model/User.model.js`
+```js
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema()
+
+const User = mongoose.model("User",userSchema)
+
+export default User
+```
+- `That above structure always same only change "userSchema" & "User" variable names`.
+
+2] Filled data in User -> `User.model.js`
+
+3] Seperated data folder of `model`, `controller`, `routes`
+
+4] Register controller in -> `controller/user.controller.js`
+```js
+//  register controller
+const registerUser = async (req, res) => {
+	res.send("registered");
+};
+
+export {registerUser}
+```
+
+5] Route Boiler plate code in -> `routes/user.routes.js`
+```js
+import express from "express";
+
+// router 
+const router = express.Router()
+
+export default router
+```
+
+6] Import user route in -> `index.js`
+
+
+#### Summary of all 
+- initialize `package`
+	- project init -> `npm init` & build `package.json`
+- About `Errors`
+	- common error -> `"type":"module"`
+- `index.js` 
+- Come with `Express` -> for `routing`
+- `Port` in that `process.env` file
+- `.env` package
+- `cors`
+- `express.json`
+- `model`
+- `route`
+- `controller`
+- `Mongodb (mongoose)`
+
+----
+
+<br>
+
+### User Register
+
+1] Register User
+
+- [x] Postman is client to allow for send web request.
+- [x] We send post request from browser we can make whole frontend.
+
+- zod is library for validation
+
+2] Crypto module for tokens
+
+3] Node Mailer for send mails
+- Mailtrap for sending testing email
+- Install nodemailer -> `npm install nodemailer`
+
+4] Encrypt password through common package using `bcryptjs`
+- Install bcryptjs -> `npm install bcryptjs`
+
+4] We have any activity related password - 
+- save example
+	- pre-save, save, post-save
+	- before save activity some work & same after save some work i.e. `hooks`.
+
+6] Stateless login -> `JWT`(Json Web Token)
+- Install jwt -> `npm install jsonwebtoken`
+
+
+----
+
+<br>
+

@@ -37,3 +37,81 @@ Goal : Practical Implementation working of Authentication & Authorization?
 - routes
 - controller
 - middleware
+
+#### Check express server
+
+index.js
+
+```js
+import express from "express";
+import dotenv from "dotenv";
+
+const app = express();
+
+// middleware
+app.use(express.json());
+
+// routes
+
+// server start
+const port = process.env.PORT || 4000;
+app.listen(port, (err) => {
+  if (err) {
+    console.error(`Failed to start server on port ${port}:`, err.message);
+    process.exit(1);
+  }
+  console.log(`Server running on http://localhost:${port}`);
+});
+```
+
+#### Database connection
+
+index.js
+
+```js
+import express from "express";
+import dotenv from "dotenv";
+import db from "./utils/db.js";
+
+db();
+
+dotenv.config();
+const app = express();
+
+// middleware
+app.use(express.json());
+
+// routes
+
+// server start
+const port = process.env.PORT || 4000;
+app.listen(port, (err) => {
+  if (err) {
+    console.error(`Failed to start server on port ${port}:`, err.message);
+    process.exit(1);
+  }
+  console.log(`Server running on http://localhost:${port}`);
+});
+```
+
+db.js
+
+```js
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+
+const db = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URL);
+    console.log(
+      `MongoDB Connected: ${conn?.connection?.host} & Database Name: ${conn.connection.name}`
+    );
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+};
+
+export default db;
+```

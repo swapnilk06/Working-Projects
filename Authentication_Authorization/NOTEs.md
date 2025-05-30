@@ -126,10 +126,9 @@ export default db;
 
 #### Create model for register & login controller(API for register & login)
 
--[x] `Test User Authentication`
 
+### Register & Login work 
 index.js
-
 ```js
 import express from "express";
 import dotenv from "dotenv";
@@ -161,7 +160,6 @@ app.listen(port, (err) => {
 ```
 
 auth.controller.js
-
 ```js
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -215,7 +213,6 @@ export { register, login };
 ```
 
 User.model.js
-
 ```js
 import mongoose from "mongoose";
 
@@ -248,7 +245,6 @@ export default User;
 ```
 
 auth.routes.js
-
 ```js
 import express from "express";
 import { register, login } from "../controller/auth.controller.js";
@@ -263,7 +259,6 @@ export default router;
 ```
 
 db.js
-
 ```js
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -284,7 +279,14 @@ const db = async () => {
 export default db;
 ```
 
-- [x] Testing successful frontend as **Postman** & database as **MongoDB Compass**
-![alt text](./backend/utils/Testing-bckd-db.png)
+- [x] Test `User Authentication`
+- Testing successful frontend as **Postman** & database as **MongoDB Compass**
+![alt text](./backend/utils/Register-test.png)
 <br>
+
+- [x] Test `Login`
+- login get a **token** in response whenever `success` otherwise error message.
+![alt text](./backend/utils/login-test.png)
+<br>
+
 

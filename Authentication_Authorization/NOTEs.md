@@ -126,9 +126,10 @@ export default db;
 
 #### Create model for register & login controller(API for register & login)
 
+### Register & Login work
 
-### Register & Login work 
 index.js
+
 ```js
 import express from "express";
 import dotenv from "dotenv";
@@ -160,6 +161,7 @@ app.listen(port, (err) => {
 ```
 
 auth.controller.js
+
 ```js
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -213,6 +215,7 @@ export { register, login };
 ```
 
 User.model.js
+
 ```js
 import mongoose from "mongoose";
 
@@ -245,6 +248,7 @@ export default User;
 ```
 
 auth.routes.js
+
 ```js
 import express from "express";
 import { register, login } from "../controller/auth.controller.js";
@@ -259,6 +263,7 @@ export default router;
 ```
 
 db.js
+
 ```js
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -281,12 +286,185 @@ export default db;
 
 - [x] Test `User Authentication`
 - Testing successful frontend as **Postman** & database as **MongoDB Compass**
-![alt text](./backend/utils/Register-test.png)
-<br>
+- Test User auth successful in postman **POST method**
+  ![alt text](./backend/utils/register-text.png)
+  <br>
 
 - [x] Test `Login`
-- login get a **token** in response whenever `success` otherwise error message.
-![alt text](./backend/utils/login-test.png)
-<br>
+- Test login feature successful by getting a **token** in response when `success`, otherwise error message.
+- Test User auth successful in postman **POST method**
+  ![alt text](./backend/utils/login-test.png)
+  <br>
 
+### Create API endpoints
 
+- [x] User Router
+- User routes in **user.routes.js**
+
+```js
+import express from "express";
+
+// router
+const router = express.Router();
+
+// Only admin can access this router
+router.get("/admin", (req, res) => {
+  res.json({ message: "Welcome Admin" });
+});
+
+// Both admin & manager can access this router
+router.get("/manager", (req, res) => {
+  res.json({ message: "Welcome Manager" });
+});
+
+// All can access this router
+router.get("/user", (req, res) => {
+  res.json({ message: "Welcome User" });
+});
+
+export default router;
+```
+
+- Import **user router** in index.js
+
+```js
+import userRoutes from "./routes/user.routes.js";
+
+// Routes
+app.use("/api/users", userRoutes);
+```
+
+- [x] Test `User router`
+- Test User router successful in postman **GET method**
+- That 3 routes are protected. If only allowed, user authenticated then only access the routes.
+- Authenticate user based on **aceess token**.
+  http://localhost:3000/api/users/Admin
+  http://localhost:3000/api/users/Manager
+  http://localhost:3000/api/users/User
+  ![alt text](./backend/utils/user-router.png)
+  <br>
+
+#### Create middleware as **Auth Middleware** in user.route.js
+
+- We can write middleware for make the route as protected in auth.middleware.js
+- User is authenticated then only allow the user to access these routes.
+- If want to make this route as protected route, we pass the access token in the header(Postman)
+  auth.middleware.js
+
+```js
+import jwt from "jsonwebtoken";
+
+const verifyToken = (req, res, next) => {
+  let token;
+  let authHeader = req.headers.Authorization || req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer")) {
+    token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "No token, authorization denied" });
+    }
+
+    try {
+      const decode = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decode;
+      console / log("The decoded user is : ", req.user);
+      next();
+    } catch (err) {
+      res.status(400).json({ message: "Token is not valid" });
+    }
+  }
+};
+
+export default verifyToken;
+```
+
+user.routes.js
+
+```js
+import express from "express";
+import verifyToken from "../middleware/auth.middleware.js";
+
+// router
+const router = express.Router();
+
+// Only admin can access this router
+router.get("/admin", verifyToken, (req, res) => {
+  res.json({ message: "Welcome Admin" });
+});
+
+// Both admin & manager can access this router
+router.get("/manager", verifyToken, (req, res) => {
+  res.json({ message: "Welcome Manager" });
+});
+
+// All can access this router
+router.get("/user", verifyToken, (req, res) => {
+  res.json({ message: "Welcome User" });
+});
+
+export default router;
+```
+
+index.js
+
+```js
+import userRoutes from "./routes/user.js";
+```
+
+#### Create middleware as **Role Middleware** in user.route.js
+
+- Test User auth in **POST method**
+
+index.js
+
+```js
+import userRoutes from "./routes/user.routes.js";
+```
+
+role.middleware.js
+
+```js
+const authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!allowedRoles.includes(req.user.roke)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+    next();
+  };
+};
+
+export default authorizeRoles;
+```
+
+auth.middleware.js
+
+```js
+import jwt from "jsonwebtoken";
+
+const verifyToken = (req, res, next) => {
+  let token;
+  let authHeader = req.headers.Authorization || req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer")) {
+    token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "No token, authorization denied" });
+    }
+
+    try {
+      const decode = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decode;
+      console / log("The decoded user is : ", req.user);
+      next();
+    } catch (err) {
+      res.status(400).json({ message: "Token is not valid" });
+    }
+  }
+};
+
+export default verifyToken;
+```

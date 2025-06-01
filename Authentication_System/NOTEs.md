@@ -91,8 +91,7 @@ const userSchema = new mongoose.Schema({
 
 // 2nd - using the user schema create the user model
 
-const userModel =
-  mongoose.models.user || mongoose.modemodel("user", userSchema); // search for user model is available then user mode used in "userModel", its not available create the user model using the user schema
+const userModel = mongoose.models.user || mongoose.model("user", userSchema); // search for user model is available then user mode used in "userModel", its not available create the user model using the user schema
 
 // export the user model
 export default userModel; // use can userModel in other file to store the data in the mongodb database
@@ -105,6 +104,7 @@ export default userModel; // use can userModel in other file to store the data i
 - create the different controller function like ** register login, logout, verify account & password reset** & create **API endpoints** using the controller function.
 
 controllers/`auth.controller.js`
+
 ```js
 import bcrypt from "bcrypt"; // encrypt password
 import jwt from "jsonwebtoken"; // generate token for authentication
@@ -140,7 +140,7 @@ export const register = async (req, res) => {
       expiredIn: "1h",
     });
 
-		// 6] after generating token we have to send to user in the response & response add the cookie 
+		// 6] after generating token we have to send to user in the response & response add the cookie
 		// using the cookie we will send token
 		res.cookie('token', token {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7 *24 *60 * 1000
 		});
@@ -155,7 +155,7 @@ export const register = async (req, res) => {
 
 // 7] create the controller fun for user login
 export const login = async (req, res) => {
-  const { email, password } = req.body; 
+  const { email, password } = req.body;
 
 	if(!email || !password){
 		return res.json({success: fasle, message: 'Email and password are required' }) // if email & password missing return the response
@@ -166,13 +166,13 @@ export const login = async (req, res) => {
 
 		// if user could not find any user from email id
 		if (!user) {
-      return res.json({ success: false, message: "Invalid email" }); 
+      return res.json({ success: false, message: "Invalid email" });
 		}
 
 		const isMatch = await bcrypt.compare(password, user.password);
 
 		if(!isMatch){
-			return res.json({ success: false, message: "Invalid password" }); 
+			return res.json({ success: false, message: "Invalid password" });
 		}
 
 		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {

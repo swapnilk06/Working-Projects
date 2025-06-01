@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"; // encrypt password
 import jwt from "jsonwebtoken"; // generate token for authentication
-import userModel from "../models/userModel.js";
+import userModel from "../models/User.model.js";
 
 // 1] create the controller fun for user register
 export const register = async (req, res) => {
@@ -34,7 +34,10 @@ export const register = async (req, res) => {
 
 		// 6] after generating token we have to send to user in the response & response add the cookie 
 		// using the cookie we will send token
-		res.cookie('token', token {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7 *24 *60 * 1000
+		res.cookie('token', token, { 
+		httpOnly: true,
+			secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+			maxAge: 7 * 24 * 60 * 60 * 1000
 		});
 
 		return res.json({success: true});
@@ -71,7 +74,10 @@ export const login = async (req, res) => {
       expiredIn: "1h",
     });
 
-		res.cookie('token', token {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7 *24 *60 * 1000
+		res.cookie('token', token, {
+			httpOnly: true, 
+			secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', 
+			maxAge: 7 * 24 * 60 * 60 * 1000
 		});
 
 		return res.json({success: true});

@@ -1,0 +1,18 @@
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import cookieParser from "cookie-parser";
+
+import db from "./utils/mongodb.js";
+
+const app = express();
+const port = process.env.PORT || 4000; // app running port
+db(); // mongoDB connection
+
+app.use(express.json()); // all the request will pass using json
+app.use(cookieParser());
+app.use(cors({ credentails: true })); // will send the cookies in the response
+
+app.get("/", (req, res) => res.send("API Working Successfully")); // msg visible
+
+app.listen(port, () => console.log(`Server start on port: ${port}`)); // after start backend show that message

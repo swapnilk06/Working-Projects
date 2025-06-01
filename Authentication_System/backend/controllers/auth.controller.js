@@ -55,7 +55,7 @@ export const login = async (req, res) => {
 
   if (!email || !password) {
     return res.json({
-      success: fasle,
+      success: false,
       message: "Email and password are required",
     }); // if email & password missing return the response
   }
@@ -74,10 +74,12 @@ export const login = async (req, res) => {
       return res.json({ success: false, message: "Invalid password" });
     }
 
+    // create JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
+    // set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

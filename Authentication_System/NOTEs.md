@@ -163,7 +163,7 @@ export const login = async (req, res) => {
 
   if (!email || !password) {
     return res.json({
-      success: fasle,
+      success: false,
       message: "Email and password are required",
     }); // if email & password missing return the response
   }
@@ -182,10 +182,12 @@ export const login = async (req, res) => {
       return res.json({ success: false, message: "Invalid password" });
     }
 
+    // create JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
+    // set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -214,7 +216,6 @@ export const logout = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
-
 ```
 
 ### After create API endpoint using controller fun - Create Routes
@@ -233,7 +234,6 @@ authRouter.post("/login", login);
 authRouter.post("/logout", logout);
 
 export default authRouter;
-
 ```
 
 update all over code in `index.js`
@@ -261,4 +261,24 @@ app.use("/api/auth", authRouter);
 
 app.listen(port, () => console.log(`Server start on port: ${port}`)); // after start backend show that message
 ```
+
+### After creating 3 API (register, login, logout) test that using Postman
+
+- [x] Test the user registration API using postman
+- In development env **Cookies** show "secure => false" otherwise in production show "secure => true"
+      ![alt text](./backend/utils/test-registration.png)
+      <br>
+
+- [x] Test the user login API
+- Incorrect email
+  ![alt text](./backend/utils/test-login-incorrect.png)
+  <br>
+
+- Incorrect password
+  ![alt text](./backend/utils/test-login-incorrect-2.png)
+  <br>
+
+- [x] Test the user logout API
+- after logout don't have anything in the cookies.
+
 

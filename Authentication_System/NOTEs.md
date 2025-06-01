@@ -54,13 +54,13 @@ const db = async () => {
     console.log("MongoDB Database Connected")
   );
 
-  await mongoose.connect(`${process.env.MONGODB_URL}/auth-system`);
+  await mongoose.connect(`${process.env.MONGODB_URL}/authentication_system_db`);
 };
 
 export default db;
 ```
 
-`index.js`
+update in `index.js`
 
 ```js
 import db from "./utils/mongodb.js";
@@ -108,7 +108,7 @@ controllers/`auth.controller.js`
 ```js
 import bcrypt from "bcrypt"; // encrypt password
 import jwt from "jsonwebtoken"; // generate token for authentication
-import userModel from "../models/userModel.js";
+import userModel from "../models/User.model.js";
 
 // 1] create the controller fun for user register
 export const register = async (req, res) => {
@@ -121,14 +121,14 @@ export const register = async (req, res) => {
 
   // after succesfully executed above code whenever success true
   try {
-		// 3] before encrypt password check user existance
+    // 3] before encrypt password check user existance
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
       return res.json({ success: false, message: "User already exists" }); // no user with email id then stroed into hash password
     }
 
-		// 2] encrypt the password using bcrypt
+    // 2] encrypt the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10); // before hash password check the existing user
 
     // 4] create the user for the database using user model
@@ -137,15 +137,19 @@ export const register = async (req, res) => {
 
     // 5] create token for the authentication using the cookies
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiredIn: "1h",
+      expiresIn: "1h",
     });
 
-		// 6] after generating token we have to send to user in the response & response add the cookie
-		// using the cookie we will send token
-		res.cookie('token', token {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7 *24 *60 * 1000
-		});
+    // 6] after generating token we have to send to user in the response & response add the cookie
+    // using the cookie we will send token
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-		return res.json({success: true});
+    return res.json({ success: true });
 
     // try to create user account & store the data in the database after reached to name, email, password
   } catch (error) {
@@ -157,51 +161,104 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-	if(!email || !password){
-		return res.json({success: fasle, message: 'Email and password are required' }) // if email & password missing return the response
-	}
+  if (!email || !password) {
+    return res.json({
+      success: fasle,
+      message: "Email and password are required",
+    }); // if email & password missing return the response
+  }
 
-	try {
-		const user = await userModel.findOne({ email });
+  try {
+    const user = await userModel.findOne({ email });
 
-		// if user could not find any user from email id
-		if (!user) {
+    // if user could not find any user from email id
+    if (!user) {
       return res.json({ success: false, message: "Invalid email" });
-		}
+    }
 
-		const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
-		if(!isMatch){
-			return res.json({ success: false, message: "Invalid password" });
-		}
+    if (!isMatch) {
+      return res.json({ success: false, message: "Invalid password" });
+    }
 
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiredIn: "1h",
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
 
-		res.cookie('token', token {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7 *24 *60 * 1000
-		});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-		return res.json({success: true});
-
-	} catch (error) {
-		res.json({ success: false, message: error.message });
-	}
-}
+    return res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
 // 8] create the controller fun for user logout
 
 export const logout = async (req, res) => {
-	try {
-		res.clearCookie('token', {
-			httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-		})
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    });
 
-		return res.json({success: true, message: "Logged Out" })
+    return res.json({ success: true, message: "Logged Out" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
-	} catch (error) {
-		res.json({ success: false, message: error.message });
-	}
-}
+```
+
+### After create API endpoint using controller fun - Create Routes
+
+routes/`auth.routes.js`
+
+```js
+import express from "express";
+import { register, login, logout } from "../controllers/auth.controller.js"; // add 3 controller funs
+
+const authRouter = express.Router(); // after creating endpoints add "authRouter" in index.js
+
+// created 3 endpoints in authRouter
+authRouter.post("/register", register);
+authRouter.post("/login", login);
+authRouter.post("/logout", logout);
+
+export default authRouter;
+
+```
+
+update all over code in `index.js`
+
+```js
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import cookieParser from "cookie-parser";
+
+import db from "./utils/mongodb.js";
+import authRouter from "./routes/auth.routes.js";
+
+const app = express();
+const port = process.env.PORT || 4000; // app running port
+db(); // mongoDB connection
+
+app.use(express.json()); // all the request will pass using json
+app.use(cookieParser());
+app.use(cors({ credentails: true })); // will send the cookies in the response
+
+// API Endpoints
+app.get("/", (req, res) => res.send("API Working Successfully")); // msg visible
+app.use("/api/auth", authRouter);
+
+app.listen(port, () => console.log(`Server start on port: ${port}`)); // after start backend show that message
 ```
 

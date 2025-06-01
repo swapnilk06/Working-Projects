@@ -5,7 +5,7 @@ const db = async () => {
     console.log("MongoDB Database Connected")
   );
 
-  await mongoose.connect(`${process.env.MONGODB_URL}/auth-system`);
+  await mongoose.connect(`${process.env.MONGODB_URL}/authentication_system_db`);
 };
 
 export default db;

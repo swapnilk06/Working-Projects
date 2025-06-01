@@ -13,14 +13,14 @@ export const register = async (req, res) => {
 
   // after succesfully executed above code whenever success true
   try {
-		// 3] before encrypt password check user existance
+    // 3] before encrypt password check user existance
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
       return res.json({ success: false, message: "User already exists" }); // no user with email id then stroed into hash password
     }
 
-		// 2] encrypt the password using bcrypt
+    // 2] encrypt the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10); // before hash password check the existing user
 
     // 4] create the user for the database using user model
@@ -29,18 +29,19 @@ export const register = async (req, res) => {
 
     // 5] create token for the authentication using the cookies
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiredIn: "1h",
+      expiresIn: "1h",
     });
 
-		// 6] after generating token we have to send to user in the response & response add the cookie 
-		// using the cookie we will send token
-		res.cookie('token', token, { 
-		httpOnly: true,
-			secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-			maxAge: 7 * 24 * 60 * 60 * 1000
-		});
+    // 6] after generating token we have to send to user in the response & response add the cookie
+    // using the cookie we will send token
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-		return res.json({success: true});
+    return res.json({ success: true });
 
     // try to create user account & store the data in the database after reached to name, email, password
   } catch (error) {
@@ -50,54 +51,58 @@ export const register = async (req, res) => {
 
 // 7] create the controller fun for user login
 export const login = async (req, res) => {
-  const { email, password } = req.body; 
+  const { email, password } = req.body;
 
-	if(!email || !password){
-		return res.json({success: fasle, message: 'Email and password are required' }) // if email & password missing return the response
-	}
+  if (!email || !password) {
+    return res.json({
+      success: fasle,
+      message: "Email and password are required",
+    }); // if email & password missing return the response
+  }
 
-	try {
-		const user = await userModel.findOne({ email });
+  try {
+    const user = await userModel.findOne({ email });
 
-		// if user could not find any user from email id
-		if (!user) {
-      return res.json({ success: false, message: "Invalid email" }); 
-		}
+    // if user could not find any user from email id
+    if (!user) {
+      return res.json({ success: false, message: "Invalid email" });
+    }
 
-		const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
-		if(!isMatch){
-			return res.json({ success: false, message: "Invalid password" }); 
-		}
+    if (!isMatch) {
+      return res.json({ success: false, message: "Invalid password" });
+    }
 
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiredIn: "1h",
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
 
-		res.cookie('token', token, {
-			httpOnly: true, 
-			secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', 
-			maxAge: 7 * 24 * 60 * 60 * 1000
-		});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-		return res.json({success: true});
-
-	} catch (error) {
-		res.json({ success: false, message: error.message });
-	}
-}
+    return res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
 // 8] create the controller fun for user logout
 
 export const logout = async (req, res) => {
-	try {
-		res.clearCookie('token', {
-			httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-		})
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    });
 
-		return res.json({success: true, message: "Logged Out" })
-
-	} catch (error) {
-		res.json({ success: false, message: error.message });
-	}
-}
+    return res.json({ success: true, message: "Logged Out" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};

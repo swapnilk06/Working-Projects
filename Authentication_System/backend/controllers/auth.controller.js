@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
     // 5] create token for the authentication using the cookies
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // 6] after generating token we have to send to user in the response & response add the cookie
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
 
     // create JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // set token in cookie
@@ -118,5 +118,74 @@ export const logout = async (req, res) => {
     return res.json({ success: true, message: "Logged Out" });
   } catch (error) {
     res.json({ success: false, message: error.message });
+  }
+};
+
+// 9] Create the controller fun for send verification OTP to the user email
+export const sendVerifyOtp = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // find the user from our database
+    const user = await userModel.findById(userId);
+
+    if (user.isAccountVerified) {
+      return res.json({ success: false, message: "Account Already verified" });
+    }
+
+    // suppose account is not verified then generate OTP & send user email id
+    // generate OTP using math random fun
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    user.verifyOtp = otp;
+    user.verifyOtpExpireAt = Date.now() + 3 * 60 * 1000; // 3 mins
+
+    await user.save();
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: `Your OTP is ${otp}. Verify your account using this OTP.`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    res.json({ success: true, message: "Verification OTP sent on Email" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// 10] Create the controller fun for verify Email
+
+export const verifyEmail = async (req, res) => {
+  const { userId, otp } = req.body;
+
+  if (!userId || !otp) {
+    return res.json({ success: false, message: "Missing Details" });
+  }
+  try {
+    // find the user from the database
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    if (user.verifyOtp === "" || user.verifyOtp !== otp) {
+      return res.json({ success: false, message: "Invalid OTP" });
+    }
+
+    if (user.verifyOtpExpireAt < Date.now()) {
+      return res.json({ success: false, message: "OTP Expired" });
+    }
+
+    user.isAccountVerified = true;
+    user.verifyOtp = "";
+    user.verifyOtpExpireAt = 0;
+
+    await user.save();
+    return res.json({ success: true, message: "Email verified successfully" });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
   }
 };

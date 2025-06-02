@@ -137,7 +137,7 @@ export const register = async (req, res) => {
 
     // 5] create token for the authentication using the cookies
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // 6] after generating token we have to send to user in the response & response add the cookie
@@ -184,7 +184,7 @@ export const login = async (req, res) => {
 
     // create JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // set token in cookie
@@ -340,8 +340,158 @@ SENDER_EMAIL=
 ```
 
 - Email send welcome msg successfully
-![alt text](./backend/utils/test-email-msg.png)
-<br>
-
+  ![alt text](./backend/utils/test-email-msg.png)
+  <br>
 
 ### Send verification OTP - controller fun
+
+- Update code in controllers/`auth.controller.js`
+
+```js
+// 9] Create the controller fun for send verification OTP to the user email
+export const sendVerifyOtp = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // find the user from our database
+    const user = await userModel.findById(userId);
+
+    if (user.isAccountVerified) {
+      return res.json({ success: false, message: "Account Already verified" });
+    }
+
+    // suppose account is not verified then generate OTP & send user email id
+    // generate OTP using math random fun
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    user.verifyOtp = otp;
+    user.verifyOtpExpireAt = Date.now() + 3 * 60 * 1000; // 3 mins
+
+    await user.save();
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: `Your OTP is ${otp}. Verify your account using this OTP.`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    res.json({ success: true, message: "Verification OTP sent on Email" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+```
+
+### Get the OTP & verify the user account - controller fun
+
+- Update code in controllers/`auth.controller.js`
+
+- user has receive OTP on the email
+
+```js
+// 10] Create the controller fun for verify Email
+
+export const verifyEmail = async (req, res) => {
+  const { userId, otp } = req.body;
+
+  if (!userId || !otp) {
+    return res.json({ success: false, message: "Missing Details" });
+  }
+  try {
+    // find the user from the database
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    if (user.verifyOtp === "" || user.verifyOtp !== otp) {
+      return res.json({ success: false, message: "Invalid OTP" });
+    }
+
+    if (user.verifyOtpExpireAt < Date.now()) {
+      return res.json({ success: false, message: "OTP Expired" });
+    }
+
+    user.isAccountVerified = true;
+    user.verifyOtp = "";
+    user.verifyOtpExpireAt = 0;
+
+    await user.save();
+    return res.json({ success: true, message: "Email verified successfully" });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+```
+
+### Create middleware function
+
+- Get the user id from the token & token is store in the cookies.
+- We need a middleware that will get the cookie & cookie find the token.
+- From the token find the user id & user id added in the request body.
+- Update code in middleware/`userauth.middleware.js`
+
+```js
+import jwt from "jsonwebtoken";
+
+// 1st middlware function executed i.e. userAuth
+const userAuth = async (req, res, next) => {
+  const { token } = req.cookies; // 2nd get the token from the cookie
+
+  if (!token) {
+    return res.json({ success: false, message: "Not Authorized Login Again" });
+  }
+
+  try {
+    // 3rd decode the token
+    const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (tokenDecode.id) {
+      req.body = req.body || {};
+      req.body.userId = tokenDecode.id;
+    } else {
+      return res.json({
+        success: false,
+        message: "Not Authorized Login Again",
+      });
+    }
+
+    next(); // 4th next fun execute our controller fun "sendVerifyOtp" -> userId that is added in middleware userauth
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+// 5th export the middleware
+export default userAuth;
+```
+
+- Update code in routes/`auth.routes.js`
+
+```js
+import {
+  register,
+  login,
+  logout,
+  sendVerifyOtp,
+  verifyEmail,
+} from "../controllers/auth.controller.js";
+import userAuth from "../middleware/userauth.middleware.js";
+
+authRouter.post("/send-verify-otp", userAuth, sendVerifyOtp);
+authRouter.post("/verify-account", userAuth, verifyEmail);
+```
+
+### Test the endpoints send-verify-otp & verify-account using postman
+
+- OTP will received on email
+  ![alt text](./backend/utils/test-send-verify-otp.png)
+  <br>
+
+- Verify account through on email otp
+  ![alt text](./backend/utils/test-verify-account.png)
+  <br>
+
+### User already authenticated or not?

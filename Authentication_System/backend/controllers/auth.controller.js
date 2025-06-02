@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt"; // encrypt password
 import jwt from "jsonwebtoken"; // generate token for authentication
 import userModel from "../models/User.model.js";
+import transporter from "../utils/nodemailer.js";
 
 // 1] create the controller fun for user register
 export const register = async (req, res) => {
@@ -41,6 +42,17 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    // Sending email to user
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Welocome to Authentication System",
+      text: `Welcome Auth base website. Your account has been created with email id: ${email}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // after sending the email get response success => true
     return res.json({ success: true });
 
     // try to create user account & store the data in the database after reached to name, email, password

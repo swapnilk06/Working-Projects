@@ -266,8 +266,8 @@ app.listen(port, () => console.log(`Server start on port: ${port}`)); // after s
 
 - [x] Test the user registration API using postman
 - In development env **Cookies** show "secure => false" otherwise in production show "secure => true"
-      ![alt text](./backend/utils/test-registration.png)
-      <br>
+  ![alt text](./backend/utils/test-registration.png)
+  <br>
 
 - [x] Test the user login API
 - Incorrect email
@@ -281,4 +281,67 @@ app.listen(port, () => console.log(`Server start on port: ${port}`)); // after s
 - [x] Test the user logout API
 - after logout don't have anything in the cookies.
 
+### Email functionality - controller fun
 
+- New user account can br created user will receive message.
+- Configure **node mail** that allow us to send email.
+
+/utils/`nodemailer.js`
+
+```js
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+export default transporter;
+```
+
+Update code in controllers/`auth.controller.js`
+
+```js
+import transporter from "../utils/nodemailer.js";
+
+// Sending email to user
+const mailOptions = {
+  from: process.env.SENDER_EMAIL,
+  to: email,
+  subject: "Welocome to Authentication System",
+  text: `Welcome Auth base website. Your account has been created with email id: ${email}`,
+};
+
+await transporter.sendMail(mailOptions);
+
+// after sending the email get response success => true
+```
+
+`.env`
+
+```env
+PORT='3000'
+
+MONGODB_URL='mongodb://localhost:27017'
+
+JWT_SECRET = 'secreat##key'
+
+NODE_ENV ='development'
+
+SMTP_USER=
+SMTP_PASS=
+SENDER_EMAIL=
+```
+
+- Email send welcome msg successfully
+![alt text](./backend/utils/test-email-msg.png)
+<br>
+
+
+### Send verification OTP - controller fun

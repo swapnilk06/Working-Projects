@@ -5,7 +5,10 @@ import {
   logout,
   sendVerifyOtp,
   verifyEmail,
-} from "../controllers/auth.controller.js"; // add 3 controller funs
+  isAuthenticated,
+  sendResetOtp,
+  restPassword,
+} from "../controllers/auth.controller.js"; // add controller funs
 import userAuth from "../middleware/userauth.middleware.js";
 const authRouter = express.Router(); // after creating endpoints add "authRouter" in index.js
 
@@ -14,7 +17,12 @@ authRouter.post("/register", register);
 authRouter.post("/login", login);
 authRouter.post("/logout", logout);
 
+// enponits using middlewares
 authRouter.post("/send-verify-otp", userAuth, sendVerifyOtp);
 authRouter.post("/verify-account", userAuth, verifyEmail);
+authRouter.post("/is-auth", userAuth, isAuthenticated);
+
+authRouter.post("/send-reset-otp", sendResetOtp);
+authRouter.post("/reset-password", restPassword);
 
 export default authRouter;

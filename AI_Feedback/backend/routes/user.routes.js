@@ -1,12 +1,14 @@
 import express from "express";
 import {
-  getMe,
-  login,
-  logoutUser,
   registerUser,
   verifyUser,
+  login,
+  getMe,
+  logoutUser,
+  forgotPassword,
+  resetPassword,
 } from "../controller/user.controller.js";
-import { isLoggedIn } from "../middleware/auth.middleware.js";
+import userAuth from "../middleware/userauth.middleware.js";
 
 // router
 const router = express.Router();
@@ -14,7 +16,11 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.get("/verify/:token", verifyUser);
 router.post("/login", login);
-router.get("/profile", isLoggedIn, getMe);
-router.get("/logout", isLoggedIn, logoutUser);
+router.get("/logout", logoutUser);
+
+// using middleware
+router.get("/profile", userAuth, getMe);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 export default router;

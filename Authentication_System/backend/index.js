@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import db from "./utils/mongodb.js";
 import authRouter from "./routes/auth.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 const app = express();
 const port = process.env.PORT || 4000; // app running port
@@ -17,5 +18,6 @@ app.use(cors({ credentails: true })); // will send the cookies in the response
 // API Endpoints
 app.get("/", (req, res) => res.send("API Working Successfully")); // msg visible
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => console.log(`Server start on port: ${port}`)); // after start backend show that message

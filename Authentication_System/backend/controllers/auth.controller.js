@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
     // 5] create token for the authentication using the cookies
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+      expiresIn: "168h",
     });
 
     // 6] after generating token we have to send to user in the response & response add the cookie
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
 
     // create JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+      expiresIn: "168h",
     });
 
     // set token in cookie
@@ -270,7 +270,6 @@ export const restPassword = async (req, res) => {
       success: true,
       message: "Password has been reset successfully",
     });
-    
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }

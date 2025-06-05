@@ -49,7 +49,7 @@ const Login = () => {
         }
       }
     } catch (error) {
-      toast.error(data.message);
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
   return (
@@ -78,7 +78,7 @@ const Login = () => {
               <input
                 onChange={(e) => setName(e.target.value)}
                 value={name}
-                className="bg-transparent outline-none"
+                className="bg-transparent outline-none w-full flex-1"
                 type="text"
                 placeholder="Full Name"
                 required
@@ -91,7 +91,7 @@ const Login = () => {
             <input
               onChange={(e) => setEmail(e.target.value)}
               value={email}
-              className="bg-transparent outline-none"
+              className="bg-transparent outline-none w-full flex-1"
               type="email"
               placeholder="Email Id"
               required
@@ -103,7 +103,7 @@ const Login = () => {
             <input
               onChange={(e) => setPassword(e.target.value)}
               value={password}
-              className="bg-transparent outline-none"
+              className="bg-transparent outline-none w-full flex-1"
               type="password"
               placeholder="Password"
               required

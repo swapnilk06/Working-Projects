@@ -4,9 +4,14 @@ import { toast } from "react-toastify";
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
+  
+  
+  // send the cookies
+  axios.defaults.withCredentials = true;
+
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedin, setIsLoggedin] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(false);
 
   const getAuthState = async () => {
     try {
@@ -28,9 +33,9 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  // useEffect(() => {
-  //   getAuthState();
-  // }, []);
+  useEffect(() => {
+    getAuthState();
+  }, []);
   const value = {
     backendUrl,
     isLoggedin,

@@ -114,7 +114,7 @@ const Login = () => {
           </div>
 
           <p
-            onClick={() => navigate("/reset=password")}
+            onClick={() => navigate("/reset-password")}
             className="mb-4 w-fit text-gray-400 cursor-pointer hover:text-white  transition-all duration-300 ease-in-out"
           >
             Forgot password?

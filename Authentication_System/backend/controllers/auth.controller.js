@@ -2,6 +2,10 @@ import bcrypt from "bcrypt"; // encrypt password
 import jwt from "jsonwebtoken"; // generate token for authentication
 import userModel from "../models/User.model.js";
 import transporter from "../utils/nodemailer.js";
+import {
+  EMAIL_VERIFY_TEMPLATE,
+  PASSWORD_RESET_TEMPLATE,
+} from "../utils/emailTemplate.js";
 
 // 1] create the controller fun for user register
 export const register = async (req, res) => {
@@ -46,7 +50,7 @@ export const register = async (req, res) => {
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: email,
-      subject: "Welocome to Authentication System",
+      subject: "Welcome to Authentication System",
       text: `Welcome Auth base website. Your account has been created with email id: ${email}`,
     };
 
@@ -145,7 +149,12 @@ export const sendVerifyOtp = async (req, res) => {
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: user.email,
-      subject: `Your OTP is ${otp}. Verify your account using this OTP.`,
+      subject: `Account Verification OTP`,
+      // text: `Your OTP is ${otp}. Verify your account using this OTP`,
+      html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email
+      ),
     };
     await transporter.sendMail(mailOptions);
 
@@ -223,7 +232,11 @@ export const sendResetOtp = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: `Password Reset OTP`,
-      text: `Your OTP for resetting your password is ${otp}. Use this oTP to proceed with restting your password.`,
+      // text: `Your OTP for resetting your password is ${otp}. Use this oTP to proceed with restting your password.`,
+      html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email
+      ),
     };
     await transporter.sendMail(mailOptions);
 

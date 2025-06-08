@@ -104,8 +104,6 @@ const ResetPassword = () => {
           <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-lg bg-[#333A5C]">
             <img src={assets.mail_icon} alt="" className="w-3 h-3" />
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
               className="bg-transparent outline-none w-full flex-1 text-white "
               type="email"
               placeholder="Email Id"

@@ -1,5 +1,66 @@
 # Authentication System - Email Verfication, Reset Password working concept
 
+#### File/Folder Structure
+
+- [x] FRONTEND (Vite + React + TailwindCSS)
+- [x] BACKEND (Node.js + Express + MongoDB + JWT)
+
+```bash
+auth-system/
+│
+├── backend/                        # Node.js + Express backend
+│   ├── config/
+│   │   └── db.js                   # MongoDB connection
+│   │
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   └── user.controller.js      # Register, login, reset, etc.
+│   │
+│   ├── middlewares/
+│   │   └── userauth.middleware.js      # JWT verification
+│   │
+│   ├── models/
+│   │   └── User.model.js           # Mongoose schema
+│   │
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   └── user.routes.js          # All auth routes
+│   │
+│   ├── utils/
+│   │   ├── emailTemplates.js       # HTML templates for email
+│   │   ├── mongodb.js
+│   │   └── nodemailer.js           # Nodemailer transporter config
+│   │
+│   ├── .env                        # Environment variables
+│   ├── index.js                    # Entry point (Express server)
+│   ├── package.json
+│   └── README.md
+│
+├── frontend/                       # React + Vite + Tailwind frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/             # Reusable components (inputs, buttons, etc.)
+│   │   ├── pages/                  # Register, Login, ForgotPassword, etc.
+│   │   ├── contexts/               # Axios API calls
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   │
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── index.css
+│   ├── vite.config.js              # Set up proxy to backend
+│   ├── .env                        # VITE_ prefixed keys
+│   ├── package.json
+│   └── README.md
+│
+├── .gitignore
+└── README.md                       # Root README
+```
+
+<br>
+
 - [x] Requirement Installation
 - npm init -> `Server initialize`
 - npm i express -> `Create our app`
@@ -41,7 +102,7 @@ app.listen(port, () => console.log(`Server start on port: ${port}`)); // after s
 ```env
 PORT=3000
 
-MONGODB_URL='mongodb://localhost:27017/authentication_system_db'
+MONGODB_URL='mongodb://localhost:27017/'
 ```
 
 utils/`mongodb.js`
@@ -60,7 +121,7 @@ const db = async () => {
 export default db;
 ```
 
-update in `index.js`
+- Update code in `index.js`
 
 ```js
 import db from "./utils/mongodb.js";
@@ -638,5 +699,6 @@ import {
   ![alt text](test-reset-password.png)
   <br>
 
+###
 
-### 
+2:15:00 NOTES

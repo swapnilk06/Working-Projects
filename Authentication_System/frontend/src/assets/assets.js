@@ -5,6 +5,8 @@ import header_img from "./header-img.svg";
 import person_icon from "./person-icon.svg";
 import mail_icon from "./mail-icon.svg";
 import lock_icon from "./lock-icon.svg";
+import phone_icon from "./phone-icon.png";
+import feedback_icon from "./feedback-icon.png";
 
 export const assets = {
   logo,
@@ -14,4 +16,6 @@ export const assets = {
   person_icon,
   mail_icon,
   lock_icon,
+  phone_icon,
+  feedback_icon,
 };

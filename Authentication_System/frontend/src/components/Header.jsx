@@ -40,9 +40,12 @@ const Header = () => {
 
       <button
         onClick={handleGetStarted}
-        className="border border-gray-500 rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all"
+        className="relative py-2.5 px-6 rounded-full bg-white text-gray-800  transition-all duration-300 ease-in-out overflow-hidden group border border-gray-500"
       >
-        Get Started
+        <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+          Get Started
+        </span>
+        <span className="absolute inset-0 z-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></span>
       </button>
     </div>
   );

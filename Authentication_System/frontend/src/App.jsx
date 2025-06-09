@@ -28,8 +28,23 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/feedback" element={<Feedback />} />
+        <Route
+          path="/reset-password"
+          element={
+            <ProtectedRoute>
+              <ResetPassword />{" "}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <Feedback />{" "}
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/thank-you"
           element={

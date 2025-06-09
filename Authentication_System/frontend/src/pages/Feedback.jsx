@@ -104,8 +104,8 @@ const Feedback = () => {
         >
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-3">Feedback Form</h1>
-            <p className="mb-6">
-              We appreciate your feedback. It helps us grow!
+            <p className="text-center mb-6 text-indigo-300">
+              Help us improve by sharing your feedback.
             </p>
           </div>
 

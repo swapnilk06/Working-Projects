@@ -1,26 +1,42 @@
-import dotenv from 'dotenv';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from "dotenv";
 dotenv.config();
 
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + process.env.GEMINI_API_KEY;
+const API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" +
+  process.env.GEMINI_API_KEY;
 
 export async function generateFeedbackTags(feedbackText) {
   const body = {
     contents: [
       {
-        parts: [{ text: `Classify and summarize this customer feedback: "${feedbackText}". Return a JSON with "summary" and "tags".` }]
-      }
-    ]
+        parts: [
+          {
+            text: `Please summarize the following feedback and extract 2-4 tags. Respond **only** in pure JSON (no markdown or explanation). Format:
+            {
+              "summary": "...",
+              "tags": ["...", "..."]
+            }
+            Feedback: "${feedbackText}"`,
+          },
+        ],
+      },
+    ],
   };
 
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
-    const text = result.candidates[0].content.parts[0].text;
+    let text = result.candidates[0].content.parts[0].text;
+
+    // Remove triple backticks and "json" if present
+    text = text.replace(/```json|```/g, "").trim();
+
     return JSON.parse(text);
   } catch (err) {
     console.error("Gemini API Error:", err);

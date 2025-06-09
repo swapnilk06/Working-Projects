@@ -2,23 +2,30 @@ import Feedback from "../models/Feedback.model.js";
 import { generateFeedbackTags } from "../utils/apicall.js";
 
 export const submitFeedback = async (req, res) => {
-  const { fullName, email, mobile, message } = req.body;
+  const { name, email, mobile, feedback } = req.body;
 
   try {
-    const aiData = await generateFeedbackTags(message);
+    const aiData = await generateFeedbackTags(feedback);
 
-    const feedback = new Feedback({
-      fullName,
+    const newFeedback = new Feedback({
+      fullName: name,
       email,
       mobile,
-      message,
+      message: feedback,
       aiResponse: aiData.summary,
       tags: aiData.tags,
     });
 
-    await feedback.save();
-    res.status(201).json({ message: "Feedback submitted", feedback });
+    await newFeedback.save();
+    res.status(201).json({
+      success: true,
+      message: "Feedback submitted",
+      feedback: newFeedback,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to process feedback" });
+    console.error("Submit feedback error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to process feedback" });
   }
 };

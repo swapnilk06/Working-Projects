@@ -74,8 +74,12 @@ const ResetPassword = () => {
         backendUrl + "/api/auth/reset-password",
         { email, otp, newPassword }
       );
-      data.success ? toast.success(data.message) : toast.error(data.message);
-      data.success && navigate("/login");
+      if (data.success) {
+        toast.success(data.message);
+        navigate("/login?mode=login");
+      } else {
+        toast.error(data.message); // This will now show "You have already used this password..."
+      }
     } catch (error) {
       toast.error(error.message);
     }

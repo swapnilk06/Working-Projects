@@ -14,6 +14,7 @@ auth-system/
 │   │
 │   ├── controllers/
 │   │   ├── auth.controller.js
+
 │   │   └── user.controller.js      # Register, login, reset, etc.
 │   │
 │   ├── middlewares/

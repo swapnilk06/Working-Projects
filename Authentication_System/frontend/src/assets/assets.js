@@ -1,4 +1,5 @@
 import logo from "./auth-logo.png";
+import logo_light from "./auth-logo-light.png";
 import arrow_icon from "./arrow-right-icon.svg";
 import hand_wave from "./hand-wave-icon.png";
 import header_img from "./header-img.svg";
@@ -10,6 +11,7 @@ import feedback_icon from "./feedback-icon.png";
 
 export const assets = {
   logo,
+  logo_light,
   arrow_icon,
   hand_wave,
   header_img,

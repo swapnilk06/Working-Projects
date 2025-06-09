@@ -271,6 +271,15 @@ export const restPassword = async (req, res) => {
       return res.json({ success: false, message: "OTP Expired" });
     }
 
+    // 👉 Check if new password is same as old password
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.json({
+        success: false,
+        message: "You have already used this password. Try a new one.",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;

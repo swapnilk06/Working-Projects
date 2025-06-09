@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  
-  
   // send the cookies
   axios.defaults.withCredentials = true;
 

@@ -4,13 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
 
-  const [state, setState] = useState("Sign Up");
+  // const [state, setState] = useState("Sign Up"); // old
+  const location = useLocation();
+  const defaultMode =
+    new URLSearchParams(location.search).get("mode") || "signup";
+  const [state, setState] = useState(
+    defaultMode === "login" ? "Login" : "Sign Up"
+  );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +38,7 @@ const Login = () => {
 
         if (data.success) {
           setIsLoggedin(true);
-          getUserData();
+          await getUserData();
           navigate("/");
         } else {
           toast.error(data.message);
@@ -44,7 +51,7 @@ const Login = () => {
 
         if (data.success) {
           setIsLoggedin(true);
-          getUserData();
+          await getUserData();
           navigate("/");
         } else {
           toast.error(data.message);

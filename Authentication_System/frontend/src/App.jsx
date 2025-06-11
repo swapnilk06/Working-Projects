@@ -9,7 +9,6 @@ import ThankYou from "./pages/ThankYou";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -28,14 +27,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/reset-password"
-          element={
-            <ProtectedRoute>
-              <ResetPassword />{" "}
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/feedback"
           element={

@@ -14,7 +14,7 @@ auth-system/
 │   │
 │   ├── controllers/
 │   │   ├── auth.controller.js
-
+│   │   ├── feedback.controller.js
 │   │   └── user.controller.js      # Register, login, reset, etc.
 │   │
 │   ├── middlewares/
@@ -25,9 +25,11 @@ auth-system/
 │   │
 │   ├── routes/
 │   │   ├── auth.routes.js
+│   │   ├── feedback.routes.js
 │   │   └── user.routes.js          # All auth routes
 │   │
 │   ├── utils/
+│   │   ├── apicall.js
 │   │   ├── emailTemplates.js       # HTML templates for email
 │   │   ├── mongodb.js
 │   │   └── nodemailer.js           # Nodemailer transporter config
@@ -42,8 +44,18 @@ auth-system/
 │   ├── src/
 │   │   ├── assets/
 │   │   ├── components/             # Reusable components (inputs, buttons, etc.)
-│   │   ├── pages/                  # Register, Login, ForgotPassword, etc.
+│   │   │   ├── Header.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   └── ProtectedRoute.jsx
 │   │   ├── contexts/               # Axios API calls
+│   │   │   └── AppContext.jsx
+│   │   ├── pages/                  # Register, Login, ForgotPassword, etc.
+│   │   │   ├── EmailVerify.jsx
+│   │   │   ├── Feedback.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── ResetPassword.jsx
+│   │   │   └── ThankYou.jsx
 │   │   ├── App.jsx
 │   │   ├── index.css
 │   │   └── main.jsx

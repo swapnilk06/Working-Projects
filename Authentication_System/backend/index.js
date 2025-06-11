@@ -8,6 +8,8 @@ import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import feedbackRouter from "./routes/feedback.routes.js";
 
+import adminRouter from "./routes/admin.routes.js";
+
 const app = express();
 const port = process.env.PORT || 4000; // app running port
 db(); // mongoDB connection
@@ -22,7 +24,9 @@ app.use(cors({ origin: allowedOrigins, credentials: true })); // will send the c
 // API Endpoints
 app.get("/", (req, res) => res.send("API Working Successfully")); // msg visible
 app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
+// app.use("/api/user", userRouter);
 app.use("/api/feedback", feedbackRouter);
+
+app.use("/api/admin", adminRouter);
 
 app.listen(port, () => console.log(`Server start on port: ${port}`)); // after start backend show that message

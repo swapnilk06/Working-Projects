@@ -6,6 +6,7 @@ import EmailVerify from "./pages/EmailVerify";
 import ResetPassword from "./pages/ResetPassword";
 import Feedback from "./pages/Feedback";
 import ThankYou from "./pages/ThankYou";
+import AdminDashboard from "./pages/AdminDashboard";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -46,6 +47,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </div>
   );

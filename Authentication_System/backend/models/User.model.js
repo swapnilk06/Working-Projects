@@ -5,6 +5,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true }, // required: true means name field required to store any user in the database
   email: { type: String, required: true, unique: true }, // can't create mutiple user with same email id
   password: { type: String, required: true },
+
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+  },
+
   verifyOtp: { type: String, default: "" },
   verifyOtpExpireAt: { type: Number, default: 0 },
   isAccountVerified: { type: Boolean, default: false }, // if the user account is verified then the value will be true

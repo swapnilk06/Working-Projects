@@ -12,6 +12,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import AdminRoute from "./components/AdminRoute";
+
 const App = () => {
   return (
     <div>
@@ -47,7 +49,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route
+          path="/admin-dashboard"
+          element={
+            // <AdminRoute>
+              <AdminDashboard />
+            // </AdminRoute>
+          }
+        />
       </Routes>
     </div>
   );

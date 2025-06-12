@@ -24,4 +24,20 @@ router.get("/all", isAdmin, async (req, res) => {
   }
 });
 
+// Admin: Delete user feedback
+router.delete("/admin/delete/:id", isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Feedback.findByIdAndDelete(id);
+    if (!deleted) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Feedback not found" });
+    }
+    res.json({ success: true, message: "Feedback deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 export default router;

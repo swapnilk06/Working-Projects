@@ -4,13 +4,11 @@ import {
   deleteUserData,
 } from "../controllers/admin.controller.js";
 import isAdmin from "../middleware/isAdmin.middleware.js";
+import { submitFeedback } from "../controllers/feedback.controller.js";
 
-const router = express.Router();
+const adminRouter = express.Router();
 
-// GET all users (only admin)
-router.get("/data", isAdmin, getUserData);
+adminRouter.get("/getallusers", isAdmin, getUserData, submitFeedback);
+adminRouter.delete("/deleteuser:id", isAdmin, deleteUserData);
 
-// DELETE user
-router.delete("/data/:id", isAdmin, deleteUserData);
-
-export default router;
+export default adminRouter;

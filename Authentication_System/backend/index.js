@@ -24,7 +24,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true })); // will send the c
 // API Endpoints
 app.get("/", (req, res) => res.send("API Working Successfully")); // msg visible
 app.use("/api/auth", authRouter);
-// app.use("/api/user", userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/feedback", feedbackRouter);
 
 app.use("/api/admin", adminRouter);

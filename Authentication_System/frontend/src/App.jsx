@@ -35,8 +35,7 @@ const App = () => {
           path="/feedback"
           element={
             <ProtectedRoute>
-              {" "}
-              <Feedback />{" "}
+              <Feedback />
             </ProtectedRoute>
           }
         />
@@ -53,7 +52,7 @@ const App = () => {
           path="/admin-dashboard"
           element={
             // <AdminRoute>
-              <AdminDashboard />
+            <AdminDashboard />
             // </AdminRoute>
           }
         />

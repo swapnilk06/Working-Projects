@@ -2,22 +2,19 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../context/AppContext";
-import { assets } from "../assets/assets";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { Save, Plus, RefreshCw, Trash2 } from "lucide-react";
 
 const AdminDashboard = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState("");
-
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [editableAdminText, setEditableAdminText] = useState({});
   const itemsPerPage = 4;
 
   const navigate = useNavigate();
-
   const { backendUrl } = useContext(AppContent);
 
   const getFeedbacks = async () => {
@@ -56,17 +53,13 @@ const AdminDashboard = () => {
     getFeedbacks();
   }, []);
 
-  // ✅ ADD handleDelete HERE
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this feedback?"))
       return;
-
     try {
       const res = await axios.delete(
         `${backendUrl}/api/feedback/admin/delete/${id}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (res.data.success) {
         toast.success("Feedback deleted successfully");
@@ -76,6 +69,54 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       toast.error("Error deleting feedback");
+    }
+  };
+
+  const handleRefreshAI = async (id) => {
+    try {
+      const res = await axios.put(
+        `${backendUrl}/api/feedback/admin/refresh-ai/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success("AI response refreshed");
+        getFeedbacks();
+      }
+    } catch {
+      toast.error("Failed to refresh AI");
+    }
+  };
+
+  const handleSaveAdminResponse = async (id) => {
+    const text = editableAdminText[id]?.trim();
+
+    if (!text) {
+      return toast.error("Admin response cannot be empty.");
+    }
+
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    if (wordCount < 5) {
+      return toast.error("Must be at least 5 words.");
+    }
+
+    try {
+      const res = await axios.put(
+        `${backendUrl}/api/feedback/admin/save-admin-response/${id}`,
+        { adminResponse: text },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success("Admin response saved");
+        setEditableAdminText((prev) => {
+          const updated = { ...prev };
+          delete updated[id];
+          return updated;
+        });
+        getFeedbacks();
+      }
+    } catch {
+      toast.error("Failed to save admin response");
     }
   };
 
@@ -105,17 +146,21 @@ const AdminDashboard = () => {
           <p className="text-center text-gray-700 font-medium">Loading...</p>
         ) : (
           <>
-            <div className="overflow-auto max-w-full shadow-md rounded-lg bg-white">
-              <table className="w-full min-w-[1000px] border-collapse text-left text-sm text-gray-700">
-                <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <div className="overflow-x-auto rounded-lg bg-white shadow-lg ring-1 ring-gray-200">
+              <table className="w-full min-w-[1100px] border-collapse text-left text-sm text-gray-800">
+                <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm">
                   <tr>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Email</th>
-                    <th className="px-4 py-3">Mobile</th>
-                    <th className="px-4 py-3">Feedback</th>
-                    <th className="px-4 py-3">AI Response</th>
-                    <th className="px-4 py-3">Tags</th>
-                    <th className="px-4 py-3 text-center">Actions</th>
+                    <th className="px-4 py-3 w-36">Name</th>
+                    <th className="px-4 py-3 w-48">Email</th>
+                    <th className="px-4 py-3 w-28">Mobile</th>
+                    <th className="px-4 py-3 w-[300px]">Feedback</th>
+                    <th className="px-4 py-3 w-[300px] max-w-xs">
+                      Admin Response
+                    </th>
+
+                    <th className="px-4 py-3 w-[300px]">AI Response</th>
+                    <th className="px-4 py-3 w-40">Tags</th>
+                    <th className="px-4 py-3 w-24 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,28 +168,114 @@ const AdminDashboard = () => {
                     currentFeedbacks.map((fb) => (
                       <tr
                         key={fb._id}
-                        className="border-b hover:bg-gray-100 transition duration-200 rounded-md"
+                        className="border-b hover:bg-gray-100 transition duration-200"
                       >
                         <td className="px-4 py-2 align-top">{fb.fullName}</td>
-                        <td className="px-4 py-2 align-top">{fb.email}</td>
+                        <td className="px-4 py-2 align-top break-words">
+                          {fb.email}
+                        </td>
                         <td className="px-4 py-2 align-top">{fb.mobile}</td>
 
-                        <td className="px-4 py-2 align-top break-words whitespace-pre-wrap max-w-xs">
+                        <td className="px-4 py-2 align-top break-words whitespace-pre-wrap">
                           {fb.message}
                         </td>
-                        <td className="px-4 py-2 align-top max-w-xs break-words text-ellipsis overflow-hidden">
-                          {fb.aiResponse}
+
+                        <td className="px-4 py-2 align-top whitespace-pre-wrap break-words max-w-xs">
+                          {editableAdminText[fb._id] !== undefined ? (
+                            <div>
+                              <textarea
+                                value={editableAdminText[fb._id]}
+                                onChange={(e) =>
+                                  setEditableAdminText((prev) => ({
+                                    ...prev,
+                                    [fb._id]: e.target.value,
+                                  }))
+                                }
+                                className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
+                                rows={4}
+                                placeholder="Write admin response..."
+                              />
+                              <div className="flex gap-2 mt-2">
+                                <button
+                                  onClick={() =>
+                                    handleSaveAdminResponse(fb._id)
+                                  }
+                                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-white hover:bg-blue-600 px-3 py-1 rounded transition duration-200"
+                                >
+                                  <Save size={16} />
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    setEditableAdminText((prev) => {
+                                      const updated = { ...prev };
+                                      delete updated[fb._id];
+                                      return updated;
+                                    })
+                                  }
+                                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-white hover:bg-gray-500 px-3 py-1 rounded transition duration-200"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="whitespace-pre-wrap break-words text-sm">
+                                {fb.adminResponse || "No response"}
+                              </p>
+                              <button
+                                onClick={() =>
+                                  setEditableAdminText((prev) => ({
+                                    ...prev,
+                                    [fb._id]: fb.adminResponse || "",
+                                  }))
+                                }
+                                className="flex items-center gap-2 text-sm text-green-600 hover:text-white hover:bg-green-600 px-3 py-1 rounded mt-2 transition duration-200"
+                              >
+                                <Plus size={16} />
+                                Add
+                              </button>
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="px-4 py-2 align-top break-words whitespace-pre-wrap">
+                          <div>
+                            <p className="mb-1">{fb.aiResponse}</p>
+                            <button
+                              onClick={() => handleRefreshAI(fb._id)}
+                              className="flex items-center gap-2 text-sm text-purple-600 hover:text-white hover:bg-purple-600 px-3 py-1 rounded transition duration-200"
+                            >
+                              <RefreshCw size={16} />
+                              Refresh
+                            </button>
+                          </div>
                         </td>
 
                         <td className="px-4 py-2 align-top">
-                          {fb.tags?.join(", ") || "No tags"}
+                          <div className="flex flex-wrap gap-2">
+                            {fb.tags?.length > 0 ? (
+                              fb.tags.map((tag, idx) => (
+                                <span
+                                  key={idx}
+                                  className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-medium"
+                                >
+                                  {tag}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-gray-400">No tags</span>
+                            )}
+                          </div>
                         </td>
 
                         <td className="px-4 py-2 align-top text-center">
                           <button
                             onClick={() => handleDelete(fb._id)}
-                            className="text-red-600 hover:text-red-800 font-semibold text-sm"
+                            className="flex items-center gap-2 justify-center text-sm text-red-600 hover:text-white hover:bg-red-600 px-3 py-1 rounded transition duration-200"
                           >
+                            <Trash2 size={16} />
                             Delete
                           </button>
                         </td>
@@ -153,7 +284,7 @@ const AdminDashboard = () => {
                   ) : (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
                         className="text-center px-4 py-6 text-gray-600"
                       >
                         No feedbacks found.

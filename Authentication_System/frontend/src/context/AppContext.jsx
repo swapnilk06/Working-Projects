@@ -16,18 +16,35 @@ export const AppContextProvider = (props) => {
       const { data } = await axios.get(backendUrl + "/api/auth/is-auth");
       if (data.success) {
         setIsLoggedin(true);
+        localStorage.setItem("auth", "true"); // ✅ Save flag for refresh
         getUserData();
       }
     } catch (error) {
-      toast.error(error.message);
+      setIsLoggedin(false);
+      localStorage.removeItem("auth");
     }
   };
   const getUserData = async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/user/data");
-      data.success ? setUserData(data.userData) : toast.error(data.message);
+
+      if (data.success) {
+        setUserData(data.userData);
+      } else {
+        const alreadyLoggedIn = localStorage.getItem("auth");
+        if (alreadyLoggedIn) {
+          toast.error(data.message || "User not found");
+        }
+        setIsLoggedin(false);
+        localStorage.removeItem("auth");
+      }
     } catch (error) {
-      toast.error(error.message);
+      const alreadyLoggedIn = localStorage.getItem("auth");
+      if (alreadyLoggedIn) {
+        toast.error(error.response?.data?.message || "User not found");
+        localStorage.removeItem("auth");
+      }
+      setIsLoggedin(false);
     }
   };
 

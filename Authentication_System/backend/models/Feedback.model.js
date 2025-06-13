@@ -5,6 +5,10 @@ const feedbackSchema = new mongoose.Schema({
   email: String,
   mobile: String,
   message: String,
+  adminResponse: {
+    type: String,
+    default: "",
+  },
   aiResponse: String,
   tags: [String],
   createdAt: {

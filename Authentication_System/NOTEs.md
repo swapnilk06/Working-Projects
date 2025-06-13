@@ -13,17 +13,22 @@ auth-system/
 │   │   └── db.js                   # MongoDB connection
 │   │
 │   ├── controllers/
+│   │   ├── admin.controller.js
 │   │   ├── auth.controller.js
 │   │   ├── feedback.controller.js
 │   │   └── user.controller.js      # Register, login, reset, etc.
 │   │
 │   ├── middlewares/
+│   │   ├── adminAuth.middleware.js
+│   │   ├── isAdmin.middleware.js
 │   │   └── userauth.middleware.js      # JWT verification
 │   │
 │   ├── models/
+│   │   ├── Feedback.model.js
 │   │   └── User.model.js           # Mongoose schema
 │   │
 │   ├── routes/
+│   │   ├── admin.routes.js
 │   │   ├── auth.routes.js
 │   │   ├── feedback.routes.js
 │   │   └── user.routes.js          # All auth routes
@@ -44,18 +49,23 @@ auth-system/
 │   ├── src/
 │   │   ├── assets/
 │   │   ├── components/             # Reusable components (inputs, buttons, etc.)
+│   │   │   ├── AdminRoute.jsx
 │   │   │   ├── Header.jsx
 │   │   │   ├── Navbar.jsx
 │   │   │   └── ProtectedRoute.jsx
+│   │   │
 │   │   ├── contexts/               # Axios API calls
 │   │   │   └── AppContext.jsx
+│   │   │
 │   │   ├── pages/                  # Register, Login, ForgotPassword, etc.
+│   │   │   ├── AdminDashboard.jsx
 │   │   │   ├── EmailVerify.jsx
 │   │   │   ├── Feedback.jsx
 │   │   │   ├── Home.jsx
 │   │   │   ├── Login.jsx
 │   │   │   ├── ResetPassword.jsx
 │   │   │   └── ThankYou.jsx
+│   │   │
 │   │   ├── App.jsx
 │   │   ├── index.css
 │   │   └── main.jsx

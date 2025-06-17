@@ -6,7 +6,7 @@
 - [x] BACKEND (Node.js + Express + MongoDB + JWT)
 
 ```bash
-auth-system/
+Authentication_System/
 │
 ├── backend/                        # Node.js + Express backend
 │   ├── config/

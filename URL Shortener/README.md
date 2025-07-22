@@ -8,7 +8,7 @@ To build a production-level URL shortener using the MERN stack (MongoDB, Express
 
 - [x] We can follow MVC Structure for that project
 
-#### Steps for creating basic backend of project
+### Steps for creating basic backend of project
 
 - [x] In **Backend** basic app setup
   - [1] `cd Backend`
@@ -37,3 +37,6 @@ app.listen(3000, () => {
 });
 ```
 
+#### Decide Routes
+- GET : Redirection
+- POST : Create short URL

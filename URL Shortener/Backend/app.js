@@ -1,9 +1,13 @@
 import express from "express";
-
+import { nanoid } from "nanoid";
 const app = express();
 
-app.get("/", (req, res) => {
-	res.send("Hello World");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/api/create", (req, res) => {
+	const {url} = req.body;
+	res.send(nanoid(7));
 })
 
 app.listen(3000, () => {

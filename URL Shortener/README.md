@@ -40,3 +40,8 @@ app.listen(3000, () => {
 #### Decide Routes
 - GET : Redirection
 - POST : Create short URL
+
+- [x] [Nano ID](https://www.npmjs.com/package/nanoid) precaution for duplicacy 
+  - It gives random strings for JavaScript
+  - Install Nano ID -> `npm i nanoid`
+
